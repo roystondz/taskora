@@ -1,6 +1,11 @@
+"use client"
 
+import { useState } from "react";
 
 export default function DashBoard(){
+
+    const [isOpen,setIsOpen] = useState(false);
+
     return(
         <div className="h-screen bg-purple-50">
             <div className="navbar flex flex-row justify-between bg-purple-300">
@@ -19,11 +24,11 @@ export default function DashBoard(){
             </div>
             <div className="body flex flex-col gap-5">
                 <div className="">
-
+ 
                 </div>
                 <div className="task-body flex flex-col">
                     <div className="action">
-                        <button className="px-4 py-2 bg-purple-200 rounded-lg m-10">
+                        <button className="px-4 py-2 bg-purple-200 rounded-lg m-10" onClick={() => setIsOpen(true)}>
                             Add New Task
                         </button>
                     </div>
@@ -45,18 +50,37 @@ export default function DashBoard(){
                                 </h5>
                             </div>
                         </div>
-
-                        <div className="task p-4 flex flex-row justify-between shadow-sm">
-                            <div className="flex flex-col">
-                                <h1 className="font-bold">Task</h1>
-                                <h5>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sit, similique.</h5>
-                            </div>
-                            <div className="flex flex-col">
-                                <h5></h5>
-                            </div>
-                        </div>
                     </div>
                 </div>
+                {isOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-purple-400 bg-opacity-20">
+                        <div className="bg-white p-6 rounded-lg shadow-lg">
+                            <h2 className="text-2xl mb-4">Add New Task</h2>
+                            <form>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Task Title</label>
+                                    <input type="text" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea className="mt-1 block w-full p-2 border border-gray-300 rounded-md"></textarea>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Tags</label>
+                                    <input type="text" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+                                </div>
+                                <div className="flex justify-end">
+                                    <button type="button" className="px-4 py-2 bg-gray-300 rounded-lg mr-2" onClick={() => setIsOpen(false)}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-lg">
+                                        Add Task
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
