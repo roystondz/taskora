@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import {PrismaClient} from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -10,14 +11,19 @@ export async function POST(req:Request){
     const user = await prisma.user.findUnique({
         where:{
             email,
-        },
-        select:{
-            email:true,
-            password:true,
         }
     })
+
+    const secret = process.env.JWT_SECRET;
+    if(!secret){
+        throw new Error("JWT_SECRET is not defined");
+    }
+
     if(user && bcrypt.compareSync(password,user.password)){
-        return NextResponse.json({message:"User is logged in",user},{status:200})
+        const token = jwt.sign({userId:user.id},secret,{expiresIn:"1h"});
+    const response =  NextResponse.json({message:"User is logged in",token},{status:200});
+        response.cookies.set("token",token,{httpOnly:true});
+    return response;
     }else{
         return NextResponse.json({message:"Invalid credentials"},{status:401})
     }
