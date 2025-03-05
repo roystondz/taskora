@@ -7,6 +7,8 @@ export default function DashBoard(){
 
     const [isOpen,setIsOpen] = useState(false);
 
+
+
     return(
         <div className="h-screen bg-purple-50">
             <div className="navbar flex flex-row justify-between bg-purple-300">

@@ -16,7 +16,7 @@ export default function Page() {
               <Link href="/user/login">Login</Link>
             </div>
             <div className="text-2xl p-3 bg-purple-600 shadow-lg rounded-2xl m-5 w-52 text-center">
-              <Link href="/login/register">Register</Link>
+              <Link href="/user/register">Register</Link>
             </div>
           </div>
         </div>

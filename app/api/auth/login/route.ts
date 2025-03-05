@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req:Request){
     try{
-        const {email,password} = await req.json();
+        const { email, password } = await req.json();
     const user = await prisma.user.findUnique({
         where:{
             email,
@@ -21,7 +21,7 @@ export async function POST(req:Request){
 
     if(user && bcrypt.compareSync(password,user.password)){
         const token = jwt.sign({userId:user.id},secret,{expiresIn:"1h"});
-    const response =  NextResponse.json({message:"User is logged in",token},{status:200});
+        const response =  NextResponse.json({token},{status:200});
         response.cookies.set("token",token,{httpOnly:true});
     return response;
     }else{

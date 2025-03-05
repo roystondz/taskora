@@ -1,25 +1,28 @@
 import { NextResponse,NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-export function middleware(req:NextRequest){
+
+
+export async function middleware(req:NextRequest){
     const token = req.cookies.get('token')?.value;  
     if(!token){
-        return NextResponse.redirect("/user/login");
+        return NextResponse.redirect(new URL("/user/login",req.url));
     }
     try{
         const secret = process.env.JWT_SECRET;
         if (!secret) {
             throw new Error("JWT_SECRET is not defined");
         }
-        jwt.verify(token, secret);
+        await jwtVerify(token, new TextEncoder().encode(secret));
         return NextResponse.next();
     }catch(error){
         console.log(error);
-        return NextResponse.redirect("/user/login");
+        return NextResponse.redirect(new URL("/user/login",req.url));
     }
 }
 
 export const config = {
     matcher: ["/user/dashboard/:path*", "/user/todo/:path*"], // Protect these routes
-  };
+    
+};
   
