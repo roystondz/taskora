@@ -8,7 +8,13 @@ export async function POST(req:Request){
     try{
         const {email,password} = await req.json();
     const user = await prisma.user.findUnique({
-        email
+        where:{
+            email,
+        },
+        select:{
+            email:true,
+            password:true,
+        }
     })
     if(user && bcrypt.compareSync(password,user.password)){
         return NextResponse.json({message:"User is logged in",user},{status:200})
