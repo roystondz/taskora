@@ -13,10 +13,10 @@ export default function Page() {
           </div>
           <div className="buttons flex flex-col items-center text-white">
             <div className="p-3 text-2xl bg-purple-600 shadow-lg rounded-2xl m-5 w-52 text-center">
-              <Link href="/login">Login</Link>
+              <Link href="/user/login">Login</Link>
             </div>
             <div className="text-2xl p-3 bg-purple-600 shadow-lg rounded-2xl m-5 w-52 text-center">
-              <Link href="/register">Register</Link>
+              <Link href="/login/register">Register</Link>
             </div>
           </div>
         </div>
