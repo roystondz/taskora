@@ -5,14 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/api/auth/register
+  url: http://localhost:3000/api/auth/login
   body: json
   auth: none
 }
 
 body:json {
   {
-    "name":"Royston",
     "email":"roy@456.com",
     "password":"1234"
   }

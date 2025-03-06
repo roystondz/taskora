@@ -12,7 +12,7 @@ export async function POST(req:Request){
         return NextResponse.json({message:"Email and password are required"},{status:400});
     }
 
-    const hashedPassword = await bcrypt.hashSync(password,10);
+    const hashedPassword = bcrypt.hashSync(password,10);
 
     const user = await prisma.user.create({
         data:{
