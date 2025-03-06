@@ -14,6 +14,7 @@ export async function POST(req:NextRequest){
             title,
             description,
             userid:userId,
+            completed:false,
         }
     });
     return NextResponse.json(task,{status:200});

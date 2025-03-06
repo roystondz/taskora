@@ -13,7 +13,7 @@ import { NextRequest,NextResponse } from "next/server";
     const tasks = await prisma.task.findMany({
         where:{
             userid:userId,
-            completed:false,
+            completed:true,
         }
     })
         return NextResponse.json(tasks,{status:200});

@@ -6,11 +6,12 @@ import Link from "next/link";
 
 
 
+
 export default function DashBoard(){
 
     const router = useRouter();
     const [isOpen,setIsOpen] = useState(false);
-
+    const [isEdit,setIsEdit] = useState(false);
     const [taskTitle,setTaskTitle]=useState("");
     const [taskDescription,setTaskDescription]=useState("");
     interface Task {
@@ -53,7 +54,7 @@ export default function DashBoard(){
             const data = await response.json();
             console.log(data);
             setIsOpen(false);
-            router.push("/user/dashboard");
+            window.location.reload();
         }else{
             alert("An error occurred");
             setIsOpen(false);
@@ -61,6 +62,106 @@ export default function DashBoard(){
 
     }
 
+    async function handleClick(){
+        const response = await fetch("/api/auth/logout");
+        if(response.ok){
+            router.push("/user/login");
+        }else{
+            alert("An error occurred");
+        }
+    }
+
+    async function deleteTask(taskId: number) {
+        const response = await fetch("/api/task/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+            }),
+        });
+        if(response.ok){
+            const data = await response.json();
+            console.log(data);
+            window.location.reload();
+        }else{
+            alert("An error occurred");
+        }
+        
+    }
+
+    const [currentTask, setCurrentTask] = useState<{ id: number; title: string ,description:string} | null>(null);
+
+    async function editTask(taskId: number) {
+        const response = await fetch("/api/task/edit/task", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+            }),
+        });
+        if(response.ok){
+            const data = await response.json();
+            console.log(data.task);
+            setCurrentTask({...data.task});
+            setIsEdit(true);
+        }else{
+            alert("An error occurred");
+        }
+    }
+    
+    async function handleEdit(e: React.FormEvent) {
+        e.preventDefault();
+      
+        try{
+            if (!currentTask) return;
+      
+        const response = await fetch("/api/task/edit/update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            taskId: currentTask.id,
+            title: currentTask.title,
+            description: currentTask.description,
+          }),
+        });
+      
+        if (response.ok) {
+          alert("Task updated successfully!");
+          setIsEdit(false);
+          window.location.reload();
+        } else {
+          alert("Failed to update task.");
+        }
+        }catch(error){
+            console.log(error);
+        }
+      }
+
+
+    async function completedTask(taskId: number) {
+        const response = await fetch("/api/task/completed", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+            }),
+        });
+        if(response.ok){
+            const data = await response.json();
+            console.log(data);
+            window.location.reload();
+        }else{
+            alert("An error occurred");
+        }
+    }
 
 
 
@@ -73,9 +174,8 @@ export default function DashBoard(){
                 <div className="flex flex-row">
                     <nav>
                         <ul className="flex flex-row p-8 text-2xl gap-5">
-                            <li><Link href="/user/todo/pending">Pending</Link></li>
                             <li><Link href="/user/todo/completed">Completed</Link></li>
-                            <li>Logout</li>
+                            <li><button onClick={handleClick} className="">Logout</button></li>
                         </ul>
                     </nav>
                 </div>
@@ -84,34 +184,40 @@ export default function DashBoard(){
                 <div className="">
  
                 </div>
-                <div className="progress-bar shadow-lg m-10">
+                <div className="progress-bar shadow-lg mt-0 ml-18 mr-18">
                         <div className="progress-ring flex flex-col p-10">
                             <h1 className="text-2xl">Progress</h1>
                         </div>
                 </div>
-                <div className="action m-10">
+                <div className="action mt-0 ml-18 mr-18 ">
                         <button className="px-4 py-2 bg-purple-200 rounded-lg" onClick={() => setIsOpen(true)}>
                             Add New Task
                         </button>
                 </div>
                 <div className="task-body flex flex-col">
                     {task.map((task) => (
-                        <div className="task m-10 flex flex-col gap-3" key={task.id}>
+                    <div className="task mt-2 ml-18 mr-18 mb-2 flex flex-col gap-3" key={task.id}>
                         <div className="task p-4 flex flex-row justify-between shadow-sm">
                             <div className="flex flex-col">
                                 <h1 className="font-bold">{task.title}</h1>
                                 <h5>{task.description}</h5>
                             </div>
-                            <div className="flex flex-row gap-3 ">
-                                <h5 className="shadow-sm bg-red-200 rounded-lg px-4 py-3">
-                                    Student
-                                </h5>
-                                
-                            </div>
+                            <div className="gap-2 flex">
+                                <button className="px-4 py-2 bg-red-200 rounded-lg" onClick={() => deleteTask(task.id)}>
+                                    Delete
+                                </button>
+                                <button className="px-4 py-2 bg-purple-200 rounded-lg" onClick={() => editTask(task.id)}>
+                                    Edit
+                                </button>
+                                <button className="px-4 py-2 bg-green-200 rounded-lg" onClick={()=>completedTask(task.id)}>
+                                    Completed
+                                </button>
+                            </div>  
                         </div>
                     </div>
                     ))}
                 </div>
+                
                 {isOpen && (
                     <div className="fixed inset-0 flex items-center justify-center bg-purple-400 bg-opacity-20">
                         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -129,11 +235,6 @@ export default function DashBoard(){
                                     onChange={(event)=>setTaskDescription(event.target.value)}
                                     ></textarea>
                                 </div>
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700">Tags</label>
-                                    <input type="text" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" 
-                                    />
-                                </div>
                                 <div className="flex justify-end">
                                     <button type="button" className="px-4 py-2 bg-gray-300 rounded-lg mr-2" onClick={() => setIsOpen(false)}>
                                         Cancel
@@ -146,7 +247,42 @@ export default function DashBoard(){
                         </div>
                     </div>
                 )}
+                {isEdit && currentTask &&(
+                    <div className="fixed inset-0 flex items-center justify-center bg-purple-400 bg-opacity-20">
+                        <div className="bg-white p-6 rounded-lg shadow-lg">
+                            <h2 className="text-2xl mb-4">Add New Task</h2>
+                            <form onSubmit={handleEdit}>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Task Title</label>
+                                    <input type="text" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" 
+                                    onChange={(event)=>{setCurrentTask({...currentTask,title:event.target.value})}}
+                                    value={currentTask ? currentTask.title : ""}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    onChange={(event)=>{setCurrentTask({...currentTask,description:event.target.value})}}
+                                    value={currentTask ? currentTask.description : ""}
+                                    ></textarea>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button type="button" className="px-4 py-2 bg-gray-300 rounded-lg mr-2" onClick={() => {setIsEdit(false)
+                                        setCurrentTask(null)}
+                                    }>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-lg">
+                                        Edit Task
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+                
             </div>
+            
         </div>
     );
 }

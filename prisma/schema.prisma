@@ -20,5 +20,5 @@ model task{
     user user @relation(fields: [userid] ,references: [id])
     title String
     description String
-
+    completed Boolean
 }
