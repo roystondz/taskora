@@ -98,6 +98,7 @@ export default function DashBoard(){
                                 <h5>{task.description}</h5>
                             </div>
                             <div className="gap-2 flex">
+                                <h1 className="px-4 py-3 bg-green-300 rounded-lg justify-center items-center">Completed</h1>
                                 <button className="px-4 py-2 bg-red-200 rounded-lg" onClick={() => deleteTask(task.id)}>
                                     Trash
                                 </button>

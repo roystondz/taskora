@@ -209,7 +209,7 @@ export default function DashBoard(){
                                 <button className="px-4 py-2 bg-purple-200 rounded-lg" onClick={() => editTask(task.id)}>
                                     Edit
                                 </button>
-                                <button className="px-4 py-2 bg-green-200 rounded-lg" onClick={()=>completedTask(task.id)}>
+                                <button className="px-4 py-2 border-green-600 border rounded-lg" onClick={()=>completedTask(task.id)}>
                                     Completed
                                 </button>
                             </div>  
