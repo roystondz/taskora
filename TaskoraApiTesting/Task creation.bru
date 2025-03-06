@@ -5,7 +5,14 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/api/task
-  body: none
+  url: http://localhost:3000/api/task/create
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "title":"Task1",
+    "description":"tASK1 DESCRIPTION"
+  }
 }

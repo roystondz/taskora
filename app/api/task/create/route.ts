@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 
-async function POST(req:NextRequest){
+export async function POST(req:NextRequest){
     const userId = req.headers.get("x-user-id");
     console.log("User Id :",userId);    
     if(!userId){
@@ -23,4 +23,4 @@ async function POST(req:NextRequest){
     
 }
 
-export default POST;
+
